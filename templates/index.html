@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Who's The Bot</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Who's The Bot?!</h1>
+      <h2>Input Username and Press Connect to Start!</h2><br>
+      <form>
+        <div class="form-label-group">
+          Username: <input type="name" id="inputUsername" ref="username" placeholder="Username" required="">
+        </div>
+        <br>
+        <button type="submit" @click.prevent="login">Connect!</button>
+      </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+    var app = new Vue({
+      el: "#app",
+      methods: {
+        login: function() {
+          let username = this.$refs.username.value
+          window.location.replace(`/game?username=${username}`);
+        }
+      }
+    })
+    </script>
+  </body>
+</html>
