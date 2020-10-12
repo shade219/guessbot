@@ -5,6 +5,13 @@
     <title>Who's The Bot</title>
   </head>
   <body>
+    <table cellpadding="5">
+      <tr>
+        <td><a href="{{url_for('about')}}">About</a></td>
+        <td><a href="{{url_for('rules')}}">Rules</a></td>
+      </tr>
+    </table>
+    <hr>
     <div id="app">
       <h1>Who's The Bot?!</h1>
       <h2>Input Username and Press Connect to Start!</h2><br>
@@ -16,6 +23,55 @@
         <button type="submit" @click.prevent="login">Connect!</button>
       </form>
     </div>
+    <hr>
+    <table cellpadding="5", border="1 px solid black">
+      <tr>
+        <th>High Scores (random matches)</th>
+        <th>High Scores (friend matches)</th>
+      </tr>
+      <tr>
+        <td>
+          <table cellpadding="5">
+            <tr>
+              <th>Username</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>Imsogood</td>
+              <td>3000</td>
+            </tr>
+            <tr>
+              <td>AlmostNumbaOne</td>
+              <td>2999</td>
+            </tr>
+            <tr>
+              <td>2020SoWeird</td>
+              <td>2020</td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table cellpadding="5">
+            <tr>
+              <th>Username</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>FriendlyGal</td>
+              <td>3600</td>
+            </tr>
+            <tr>
+              <td>FriendlyGuy</td>
+              <td>2500</td>
+            </tr>
+            <tr>
+              <td>FriendzPlz</td>
+              <td>1999</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script>
     var app = new Vue({
