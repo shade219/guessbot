@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>Who's The Bot</title>
+  <style>
+    .invisible {visibility: hidden;}
+  </style>
 </head>
 <body>
   <div id="app">
@@ -13,6 +16,87 @@
     </li>
     <hr>
     <p> Current Status: {% raw %} {{ status }} {% endraw %} </p>
+    <hr>
+    <br>
+    <div class="invisible" ref="scoreboard">
+      <table>
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td>Question #: {% raw %} {{ round }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>{% raw %} {{ question }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>Timer: 00:00</td>
+              </tr>
+            </table>
+          </td>
+          <td>
+            <table>
+              <tr>
+                <td>Score:</td>
+                <td>{% raw %} {{ score }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>Question 1:</td>
+                <td>{% raw %} {{ questionResults[0] }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>Question 2:</td>
+                <td>{% raw %} {{ questionResults[1] }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>Question 3:</td>
+                <td>{% raw %} {{ questionResults[2] }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>Question 4:</td>
+                <td>{% raw %} {{ questionResults[3] }} {% endraw %}</td>
+              </tr>
+              <tr>
+                <td>Question 5:</td>
+                <td>{% raw %} {{ questionResults[4] }} {% endraw %}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="invisible" ref="humanboard">
+      <table border="1px solid black">
+        <tr>
+          <td>Bot?</td>
+          <td>Bot?</td>
+        </tr>
+        <tr>
+          <td>{% raw %} {{ botresponse }} {% endraw %}</td>
+          <td>{% raw %} {{ playerresponse }} {% endraw %}</td>
+        </tr>
+        <tr>
+          <td><button type="button" name="button1">This is a bot!</button></td>
+          <td><button type="button" name="button2">This is a bot!</button></td>
+        </tr>
+      </table>
+    </div>
+    <div class ="invisible" ref="botboard">
+      <table border="1px solid black">
+        <tr>
+          <td>Player 2</td>
+          <td>Bot</td>
+        </tr>
+        <tr>
+          <td><input type="text" id="playerresponse" name="playerresponse"></td>
+          <td>Waiting on bot response</td>
+        </tr>
+        <tr>
+          <td><button type="button" name="button1">Submit</button></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
   </div>
   <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>

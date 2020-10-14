@@ -13,7 +13,16 @@ var app = new Vue({
     }),
     otherPlayerName: '',
     mychannel: {},
-    otherPlayerChannel: {}
+    otherPlayerChannel: {},
+    playerType: 0,
+    otherPlayerType: 0,
+    round: 0,
+    score: 0,
+    isTurn: 0,
+    question: 'Awaiting first question',
+    questionResults: ["Pending","Pending","Pending","Pending","Pending"],
+    botresponse: 'dummy bot response',
+    playerresponse: 'dummy player response'
   },
   created () {
     let url = new URL(window.location.href);
@@ -49,9 +58,11 @@ var app = new Vue({
       this.pusher.bind('client-' + this.username, (message) => {
         if (confirm("Do you want to start a game with " + message)) {
           this.otherPlayerName = message
+          this.playerType = 1
+          this.otherPlayerType = 2
           this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
           this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
-            this.otherPlayerChannel.trigger('client-game-started', this.username)
+            this.otherPlayerChannel.trigger('client-game-started', {name:this.username, ptype:this.otherPlayerType, otype:this.playerType})
           })
           this.startGame(message)
         } else {
@@ -63,7 +74,9 @@ var app = new Vue({
         }
       })
       this.myChannel.bind('client-game-started', (message) => {
-        this.status = "Game started with " + message
+        this.playerType = message.ptype
+        this.otherPlayerType = message.otype
+        this.startGame(message.name)
       })
       this.myChannel.bind('client-game-declined', () => {
         this.status = "Game declined"
@@ -78,9 +91,26 @@ var app = new Vue({
     },
     startGame: function (name) {
       this.status = "Game started with " + name
+      this.round = 1;
+      this.$refs.scoreboard.classList.remove('invisible');
+      if(this.playerType === 1){
+        this.$refs.humanboard.classList.remove('invisible');
+      } else {
+        this.$refs.botboard.classList.remove('invisible');
+        this.isTurn = 1;
+      }
     },
     gameDeclined: function() {
       this.status = "Game declined"
+    },
+    getRndInteger: function(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
+    },
+    botTurn: function() {
+
+    },
+    humanTurn: function() {
+
     }
   }
 })
