@@ -25,7 +25,8 @@ var app = new Vue({
     playerresponse: 'dummy player response',
     option1: 'Awaiting Bot Response',
     option2: 'Awaiting Bot Response',
-    randomPlacement: 0
+    randomPlacement: 0,
+    correctCount: 0
   },
   created () {
     let url = new URL(window.location.href);
@@ -118,13 +119,18 @@ var app = new Vue({
     botTurn: function(message) {
       if(message.answer === 1){
         this.questionResults[this.round-1] = "Correct!"
+        this.correctCount += 1
       } else {
         this.questionResults[this.round-1] = "Incorrect!"
         this.score += 10
       }
-      this.round += 1
-      this.isTurn = 1
-      this.question = "new question: " + this.round
+      if(this.round === 5){
+        this.gameOver()
+      } else {
+        this.round += 1
+        this.isTurn = 1
+        this.question = "new question: " + this.round
+      }
     },
     humanTurn: function(message) {
       this.question = message.question
@@ -151,6 +157,29 @@ var app = new Vue({
       if(this.isTurn === 1){
         if(this.randomPlacement === 1){
           this.questionResults[this.round-1] = "Correct!"
+          this.correctCount += 1
+          this.score += 10
+          this.question = "Awaiting Next Question"
+          this.round += 1
+          this.isTurn = 0
+          this.otherPlayerChannel.trigger('client-bot-turn', {answer:1})
+        } else {
+          this.questionResults[this.round-1] = "Incorrect!"
+          this.question = "Awaiting Next Question"
+          this.round += 1
+          this.isTurn = 0
+          this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
+        }
+        if(this.round > 5){
+          this.gameOver()
+        }
+      }
+    },
+    humanSubmit2: function() {
+      if(this.isTurn === 1){
+        if(this.randomPlacement === 2){
+          this.questionResults[this.round-1] = "Correct!"
+          this.correctCount += 1
           this.score += 10
           this.question = "Awaiting Next Question"
           this.round += 1
@@ -165,21 +194,18 @@ var app = new Vue({
         }
       }
     },
-    humanSubmit2: function() {
-      if(this.isTurn === 1){
-        if(this.randomPlacement === 2){
-          this.questionResults[this.round-1] = "Correct!"
-          this.score += 10
-          this.question = "Awaiting Next Question"
-          this.round += 1
-          this.isTurn = 0
-          this.otherPlayerChannel.trigger('client-bot-turn', {answer:1})
+    gameOver: function() {
+      if(this.playerType === 1){
+        if(this.correctCount > 2){
+          this.question = "YOU WIN!!"
         } else {
-          this.questionResults[this.round-1] = "Incorrect!"
-          this.question = "Awaiting Next Question"
-          this.round += 1
-          this.isTurn = 0
-          this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
+          this.question = "YOU LOSE!"
+        }
+      } else {
+        if(this.correctCount > 2) {
+          this.question = "YOU LOSE!"
+        } else {
+          this.Question = "YOU WIN!"
         }
       }
     }
