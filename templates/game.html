@@ -72,12 +72,12 @@
           <td>Bot?</td>
         </tr>
         <tr>
-          <td>{% raw %} {{ botresponse }} {% endraw %}</td>
-          <td>{% raw %} {{ playerresponse }} {% endraw %}</td>
+          <td>{% raw %} {{ option1 }} {% endraw %}</td>
+          <td>{% raw %} {{ option2 }} {% endraw %}</td>
         </tr>
         <tr>
-          <td><button type="button" name="button1">This is a bot!</button></td>
-          <td><button type="button" name="button2">This is a bot!</button></td>
+          <td><button v-on:click="humanSubmit1" type="button" name="button1" ref="button1">This is a bot!</button></td>
+          <td><button v-on:click="humanSubmit2" type="button" name="button2" ref="button2">This is a bot!</button></td>
         </tr>
       </table>
     </div>
@@ -88,11 +88,11 @@
           <td>Bot</td>
         </tr>
         <tr>
-          <td><input type="text" id="playerresponse" name="playerresponse"></td>
+          <td><input type="text" id="botsubmit" ref="botsubmit" name="botsubmit"  placeholder="Type response here"  required=""></td>
           <td>Waiting on bot response</td>
         </tr>
         <tr>
-          <td><button type="button" name="button1">Submit</button></td>
+          <td><button type="submit" @click.prevent="botSubmit">Submit</button></td>
           <td></td>
         </tr>
       </table>
