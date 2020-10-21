@@ -213,6 +213,9 @@ var app = new Vue({
           this.isTurn = 0
           this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
         }
+        if(this.round > 5){
+          this.gameOver()
+        }
       }
     },
     humanSubmitDefault: function() {
@@ -221,6 +224,9 @@ var app = new Vue({
       this.round += 1
       this.isTurn = 0
       this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
+      if(this.round > 5){
+        this.gameOver()
+      }
     },
     gameOver: function() {
       if(this.playerType === 1){
