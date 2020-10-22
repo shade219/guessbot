@@ -16,6 +16,11 @@ var app = new Vue({
     otherPlayerChannel: {},
     playerType: 0,
     otherPlayerType: 0,
+    canReady: 0,
+    ready: 0,
+    otherReady: 0,
+    readyDisplay: 'Not Ready',
+    otherReadyDisplay: 'Not Ready',
     round: 0,
     score: 0,
     isTurn: 0,
@@ -64,27 +69,22 @@ var app = new Vue({
     },
     listeners: function () {
       this.pusher.bind('client-' + this.username, (message) => {
-        if (confirm("Do you want to start a game with " + message)) {
-          this.otherPlayerName = message
-          this.playerType = this.getRndInteger(1,3)
-          this.otherPlayerType = this.playerType === 1 ? 2 : 1
-          this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
-          this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
-            this.otherPlayerChannel.trigger('client-game-started', {name:this.username, ptype:this.otherPlayerType, otype:this.playerType})
-          })
-          this.startGame(message)
-        } else {
-          this.otherPlayerChannel = this.pusher.subscribe('private-' + message)
-          this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
-            this.otherPlayerChannel.trigger('client-game-declined', "")
-          })
-          this.gameDeclined()
-        }
+        this.otherPlayerName = message
+        this.Status = "Connecting to other player..."
+        this.playerType = this.getRndInteger(1,3)
+        this.otherPlayerType = this.playerType === 1 ? 2 : 1
+        this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
+        this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
+          this.otherPlayerChannel.trigger('client-game-started', {name:this.username, ptype:this.otherPlayerType, otype:this.playerType})
+        })
+        this.canReady = 1
+        this.status = "Waiting for players to ready"
       })
       this.myChannel.bind('client-game-started', (message) => {
         this.playerType = message.ptype
         this.otherPlayerType = message.otype
-        this.startGame(message.name)
+        this.canReady = 1
+        this.status = "Waiting for players to ready"
       })
       this.myChannel.bind('client-game-declined', () => {
         this.status = "Game declined"
@@ -95,16 +95,32 @@ var app = new Vue({
       this.myChannel.bind('client-bot-turn', (message) => {
         this.botTurn(message)
       })
+      this.myChannel.bind('client-ready', (rdy) => {
+        this.otherReady = 1
+        this.otherReadyDisplay = "Ready!"
+      })
+      this.myChannel.bind('client-start', (rdy) => {
+        this.startGame()
+      })
     },
-    choosePlayer: function (e) {
-      this.otherPlayerName = e.target.innerText
-      this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
-      this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
-        this.otherPlayerChannel.trigger('client-' + this.otherPlayerName, this.username)
-      });
+    choosePlayer: function() {
+      var matchFound = false
+      while(!matchFound){
+        if(this.connectedPlayers.length>0){
+          matchFound = true
+          this.status = "Connecting to other player..."
+          var temp = this.getRndInteger(0,this.connectedPlayers.length)
+          this.otherPlayerName = this.connectedPlayers[temp]
+          this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
+          this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
+            this.otherPlayerChannel.trigger('client-' + this.otherPlayerName, this.username)
+          });
+        }
+      }
     },
-    startGame: function (name) {
-      this.status = "Game started with " + name
+    startGame: function() {
+      this.status = "Game started with " + this.otherPlayerName
+      this.$refs.matchmakingScreen.classList.add('invisible');
       this.round = 1;
       this.$refs.scoreboard.classList.remove('invisible');
       if(this.playerType === 1){
@@ -117,6 +133,18 @@ var app = new Vue({
     },
     gameDeclined: function() {
       this.status = "Game declined"
+    },
+    setReady: function() {
+      if(this.canReady === 1){
+        this.ready = 1
+        this.readyDisplay = "Ready!"
+        if(this.otherReady === 0){
+          this.otherPlayerChannel.trigger("client-ready", {rdy:this.ready})
+        } else {
+          this.startGame()
+          this.otherPlayerChannel.trigger("client-start", {rdy:this.ready})
+        }
+      }
     },
     getRndInteger: function(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
@@ -239,7 +267,7 @@ var app = new Vue({
         if(this.correctCount > 2) {
           this.question = "YOU LOSE!"
         } else {
-          this.Question = "YOU WIN!"
+          this.question = "YOU WIN!"
         }
       }
     },
