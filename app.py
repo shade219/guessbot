@@ -70,14 +70,20 @@ def pusher_authentication():
     return json.dumps(auth)
 
 
+# Back end database calls to database.py
 @app.route('/database', methods=['POST'])
 def database_calls():
     req_type = request.json['request_type']
-    if req_type == "get top score":
-        return database.get_top_scores()
-    if req_type == "add score":
-        return database.add_score(request.json['HumanUsername'], request.json['BotUsername'],
-                                  request.json['HumanScore'], request.json['BotScore'], request.json['MatchType'])
+    if req_type == "get top user score":
+        return database.get_top_user_scores()
+    elif req_type == "get top bot score":
+        return database.get_top_bot_scores()
+    elif req_type == "add match":
+        return database.add_match(request.json['HumanUsername'], request.json['BotUsername'], request.json['MatchType'])
+    elif req_type == "update score":
+        return database.update_scores(request.json["HumanScore"], request.json["BotScore"], request.json["SessionID"])
+    elif req_type == "delete old score":
+        return database.delete_old_scores()
 
 
 if __name__ == '__main__':
