@@ -125,8 +125,10 @@ var app = new Vue({
       this.$refs.scoreboard.classList.remove('invisible');
       if(this.playerType === 1){
         this.$refs.humanboard.classList.remove('invisible');
+        //Add axios post to create match
       } else {
         this.$refs.botboard.classList.remove('invisible');
+        // Add axios post with human/bot switched to create match
         this.isTurn = 1;
         this.startTimer()
       }
@@ -257,6 +259,7 @@ var app = new Vue({
       }
     },
     gameOver: function() {
+    // Add post to update the final score to the database
       if(this.playerType === 1){
         if(this.correctCount > 2){
           this.question = "YOU WIN!!"

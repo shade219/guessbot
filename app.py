@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, jsonify, make_response, json
+from flask import Flask, render_template, request, json
+from flask_cors import CORS
 import pusher
 import database
 
@@ -13,6 +14,7 @@ class CustomFlask(Flask):
 
 
 app = Flask(__name__)
+CORS(app)
 pusher_client = pusher.Pusher(
     app_id='1083290',
     key='a7fd256e3117436dac89',
@@ -74,15 +76,15 @@ def pusher_authentication():
 @app.route('/database', methods=['POST'])
 def database_calls():
     req_type = request.json['request_type']
-    if req_type == "get top user score":
+    if req_type == "get top user scores":
         return database.get_top_user_scores()
-    elif req_type == "get top bot score":
+    elif req_type == "get top bot scores":
         return database.get_top_bot_scores()
     elif req_type == "add match":
         return database.add_match(request.json['HumanUsername'], request.json['BotUsername'], request.json['MatchType'])
     elif req_type == "update score":
         return database.update_scores(request.json["HumanScore"], request.json["BotScore"], request.json["SessionID"])
-    elif req_type == "delete old score":
+    elif req_type == "delete old scores":
         return database.delete_old_scores()
 
 
