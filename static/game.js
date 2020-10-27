@@ -35,7 +35,8 @@ var app = new Vue({
     timerInterval: null,
     timePassed: 0,
     timeLimit: 30,
-    timeLeft: 30
+    timeLeft: 30,
+    SessionID: 0
   },
   created () {
     let url = new URL(window.location.href);
@@ -125,10 +126,18 @@ var app = new Vue({
       this.$refs.scoreboard.classList.remove('invisible');
       if(this.playerType === 1){
         this.$refs.humanboard.classList.remove('invisible');
-        //Add axios post to create match
+        // Add axios post to create match
+        await axios.post("http://localhost:5000/database", {
+            request_type: "add match",
+            HumanUsername: this.username,
+            BotUsername: this.otherPlayerName,
+            MatchType: "random"
+        }).then(
+            res => this.SessionID = res['data'],
+            error => console.log(error)
+        );
       } else {
         this.$refs.botboard.classList.remove('invisible');
-        // Add axios post with human/bot switched to create match
         this.isTurn = 1;
         this.startTimer()
       }
@@ -259,14 +268,29 @@ var app = new Vue({
       }
     },
     gameOver: function() {
-    // Add post to update the final score to the database
       if(this.playerType === 1){
+        await axios.post("http://localhost:5000/database", {
+            request_type: "update human score",
+            HumanScore: this.score,
+            "SessionID": this.SessionID
+        }).then(
+            res => console.log(res),
+            error => console.log(error)
+        );
         if(this.correctCount > 2){
           this.question = "YOU WIN!!"
         } else {
           this.question = "YOU LOSE!"
         }
       } else {
+        await axios.post("http://localhost:5000/database", {
+            request_type: "update bot score",
+            BotScore: this.score,
+            "SessionID": this.SessionID
+        }).then(
+            res => console.log(res),
+            error => console.log(error)
+        );
         if(this.correctCount > 2) {
           this.question = "YOU LOSE!"
         } else {

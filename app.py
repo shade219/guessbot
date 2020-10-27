@@ -82,8 +82,10 @@ def database_calls():
         return database.get_top_bot_scores()
     elif req_type == "add match":
         return database.add_match(request.json['HumanUsername'], request.json['BotUsername'], request.json['MatchType'])
-    elif req_type == "update score":
-        return database.update_scores(request.json["HumanScore"], request.json["BotScore"], request.json["SessionID"])
+    elif req_type == "update human score":
+        return database.update_human_score(request.json["HumanScore"], request.json["SessionID"])
+    elif req_type == "update bot score":
+        return database.update_bot_score(request.json["BotScore"], request.json["SessionID"])
     elif req_type == "delete old scores":
         return database.delete_old_scores()
 

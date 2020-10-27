@@ -73,11 +73,24 @@ def get_top_bot_scores():
         return __fail
 
 
-def update_scores(human_score, bot_score, session_id):
+def update_human_score(human_score, session_id):
     try:
         __open_connection()
-        query = "UPDATE `Score` SET `HumanScore`='%s', `BotScore`='%s' WHERE `SessionID`='%s';"
-        values = (human_score, bot_score, session_id)
+        query = "UPDATE `Score` SET `HumanScore`='%s' WHERE `SessionID`='%s';"
+        values = (human_score, session_id)
+        mycursor.execute(query, values)
+        mydb.commit()
+        __close_connection()
+        return "Success"
+    except mysql.connector.Error:
+        return __fail
+
+
+def update_bot_score(bot_score, session_id):
+    try:
+        __open_connection()
+        query = "UPDATE `Score` SET `BotScore`='%s' WHERE `SessionID`='%s';"
+        values = (bot_score, session_id)
         mycursor.execute(query, values)
         mydb.commit()
         __close_connection()
