@@ -87,13 +87,13 @@
         },
         // Add function to send request to delete old messages and fetch the top highschores for bot and human
         load: async function(){
-          await axios.post("http://localhost:5000/database", {
+          await axios.post("http://3.19.145.43/database", {
             request_type : "delete old scores"
           }).then(
             res => console.log(res),
             error => console.log(error)
           );
-          await axios.post("http://localhost:5000/database", {
+          await axios.post("http://3.19.145.43/database", {
             request_type: "get top user scores"
           }).then(
             res => {
@@ -111,7 +111,7 @@
             },
             error => console.log(error)
           );
-          await axios.post("http://localhost:5000/database", {
+          await axios.post("http://3.19.145.43/database", {
             request_type : "get top bot scores"
           }).then(
             res => {

@@ -127,7 +127,7 @@ var app = new Vue({
       if(this.playerType === 1){
         this.$refs.humanboard.classList.remove('invisible');
         // Add axios post to create match
-        await axios.post("http://localhost:5000/database", {
+        await axios.post("http://3.19.145.43/database", {
             request_type: "add match",
             HumanUsername: this.username,
             BotUsername: this.otherPlayerName,
@@ -269,7 +269,7 @@ var app = new Vue({
     },
     gameOver: function() {
       if(this.playerType === 1){
-        await axios.post("http://localhost:5000/database", {
+        await axios.post("http://3.19.145.43/database", {
             request_type: "update human score",
             HumanScore: this.score,
             "SessionID": this.SessionID
@@ -283,7 +283,7 @@ var app = new Vue({
           this.question = "YOU LOSE!"
         }
       } else {
-        await axios.post("http://localhost:5000/database", {
+        await axios.post("http://3.19.145.43/database", {
             request_type: "update bot score",
             BotScore: this.score,
             "SessionID": this.SessionID
