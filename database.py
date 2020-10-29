@@ -27,9 +27,7 @@ def __close_connection():
 def add_match(human_username, bot_username, match_type):
     try:
         __open_connection()
-        query = ("INSERT INTO `Score` " \
-                "(`HumanUsername`, `BotUsername`, `HumanScore`, `BotScore`, `SessionID`, `MatchType`) " \
-                "VALUES ('%s', '%s', '%s', '%s', %s, '%s')")
+        query = ("INSERT INTO Score (HumanUsername, BotUsername, HumanScore, BotScore, SessionID, MatchType) VALUES ('%s', '%s', '%s', '%s', %s, '%s')")
         values = (human_username, bot_username, 0, 0, "NULL", match_type)
         mycursor.execute(query, values)
         mydb.commit()
