@@ -25,22 +25,18 @@ def __close_connection():
 
 # Creates match in database and returns the match id
 def add_match(human_username, bot_username, match_type):
-    logf = open("querytest.log", "w")
     try:
         __open_connection()
         query = ("INSERT INTO `Score` (`HumanUsername`, `BotUsername`, `HumanScore`, `BotScore`, `SessionID`, `MatchType`) VALUES (%s, %s, %s, %s, %s, %s)")
-        values = (human_username, bot_username, '0', '0', 'NULL', match_type)
+        values = (human_username, bot_username, 0, 0, None, match_type)
         mycursor.execute(query, values)
         mydb.commit()
 
-        #mycursor.execute("SELECT MAX(SessionID) As Max FROM Score;")
-        #res = mycursor.fetchall()
-        res = 20
+        mycursor.execute("SELECT MAX(SessionID) As Max FROM Score;")
+        res = mycursor.fetchall()
         __close_connection()
         return res
     except mysql.connector.Error as err:
-        logf.write(err)
-        logf.close()
         return __fail
 
 
