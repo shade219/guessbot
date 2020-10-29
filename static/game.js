@@ -298,7 +298,7 @@ var app = new Vue({
     stopTimerHumanTimeout: function() {
       this.stopTimer()
       this.humanSubmitDefault()
-    }
+    },
 
     addMatch: async function(){
         await axios.post("http://3.19.145.43/database", {
@@ -310,7 +310,7 @@ var app = new Vue({
             res => this.SessionID = res['data'],
             error => console.log(error)
         );
-    }
+    },
 
     updateHumanScore: async function(){
         await axios.post("http://3.19.145.43/database", {
@@ -321,7 +321,7 @@ var app = new Vue({
             res => console.log(res),
             error => console.log(error)
         );
-    }
+    },
 
     updateBotScore: async function(){
         await axios.post("http://3.19.145.43/database", {
