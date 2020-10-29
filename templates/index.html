@@ -17,7 +17,7 @@
       <h2>Input Username and Press Connect to Start!</h2><br>
       <form>
         <div class="form-label-group">
-          Username: <input type="name" id="inputUsername" ref="username" placeholder="Username" required="">
+          Username: <input type="name" id="inputUsername" ref="username" placeholder="Username" maxlength="20" required="">
         </div>
         <br>
         <button type="submit" @click.prevent="login">Connect!</button>

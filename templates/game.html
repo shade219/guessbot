@@ -22,7 +22,7 @@
     <div ref="matchmakingScreen">
       <table>
         <tr>
-          <td><button v-on:click="choosePlayer" type="button" name="matchmakingbtn" ref="matchmakingbtn">Join Random Match</button></td>
+          <td><button v-on:click="subscribe" type="button" name="matchmakingbtn" ref="matchmakingbtn">Join Random Match</button></td>
         </tr>
         <tr>
           <td>{% raw %}{{ status }}{% endraw %}</td>
@@ -109,12 +109,29 @@
           <td>Bot</td>
         </tr>
         <tr>
-          <td><input type="text" id="botsubmit" ref="botsubmit" name="botsubmit"  placeholder="Type response here"  required=""></td>
+          <td><input type="text" id="botsubmit" ref="botsubmit" name="botsubmit"  maxlength="50" placeholder="Type response here"  required=""></td>
           <td>Waiting on bot response</td>
         </tr>
         <tr>
           <td><button type="submit" @click.prevent="botSubmit">Submit</button></td>
           <td></td>
+        </tr>
+      </table>
+    </div>
+    <div class ="invisible" ref="gameover">
+      <table>
+        <tr>
+          <td><button v-on:click="rematch" type="button" name="rematchbtn" ref="rematchbtn">I Want A Rematch!</button></td>
+          <td><button v-on:click="quitgame" type="button" name="quitbtn" ref="quitbtn">Main Menu</button></td>
+        </tr>
+        <tr>
+          <td><button v-on:click="setReady" type="button" name="readybtn" ref="readybtn">I'm Ready!</button></td>
+          <td>Other Player:</td>
+          <td>{% raw  %}{{ status }}{% endraw %}</td>
+        </tr>
+        <tr>
+          <td>{% raw %}{{ readyDisplay }}{% endraw %}</td>
+          <td>{% raw %}{{ otherReadyDisplay }}{% endraw %}</td>
         </tr>
       </table>
     </div>

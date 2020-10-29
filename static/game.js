@@ -36,19 +36,23 @@ var app = new Vue({
     timePassed: 0,
     timeLimit: 30,
     timeLeft: 30,
-    SessionID: 0
+    SessionID: 0,
+    playerQuit: false,
+    searching: true
   },
   created () {
     let url = new URL(window.location.href);
     let name = url.searchParams.get("username");
     this.username = name;
-    this.subscribe();
+    this.createChannel();
     this.listeners();
   },
   methods: {
+    createChannel: function () {
+      this.myChannel = this.pusher.subscribe('private-' + this.username);
+    },
     subscribe: function () {
       let channel = this.pusher.subscribe('presence-guessbot');
-      this.myChannel = this.pusher.subscribe('private-' + this.username);
       channel.bind('pusher:subscription_succeeded', (player) => {
         this.players = player.count -1
         player.each((player) => {
@@ -59,6 +63,11 @@ var app = new Vue({
       channel.bind('pusher:member_added', (player) => {
         this.players++;
         this.connectedPlayers.push(player.id)
+        if(this.searching){
+          this.searching = false
+          this.choosePlayer()
+        }
+
       });
       channel.bind('pusher:member_removed', (player) => {
         this.players--;
@@ -71,6 +80,7 @@ var app = new Vue({
     listeners: function () {
       this.pusher.bind('client-' + this.username, (message) => {
         this.otherPlayerName = message
+        this.searching = false;
         this.Status = "Connecting to other player..."
         this.playerType = this.getRndInteger(1,3)
         this.otherPlayerType = this.playerType === 1 ? 2 : 1
@@ -103,6 +113,13 @@ var app = new Vue({
       this.myChannel.bind('client-start', (rdy) => {
         this.startGame()
       })
+      this.myChannel.bind('client-sessionid', (id) => {
+        this.SessionID = id.id
+      })
+      this.myChannel.bind('client-iquit', (id) => {
+        this.playerQuit = true
+        this.status = "Other Player Quit"
+      })
     },
     choosePlayer: function() {
       var matchFound = false
@@ -122,11 +139,13 @@ var app = new Vue({
     startGame: function() {
       this.status = "Game started with " + this.otherPlayerName
       this.$refs.matchmakingScreen.classList.add('invisible');
+      this.$refs.gameover.classList.add('invisible');
       this.round = 1;
       this.$refs.scoreboard.classList.remove('invisible');
       if(this.playerType === 1){
         this.$refs.humanboard.classList.remove('invisible');
         this.addMatch();
+        this.otherPlayerChannel.trigger('client-sessionid', {id:this.SessionID});
       } else {
         this.$refs.botboard.classList.remove('invisible');
         this.isTurn = 1;
@@ -259,8 +278,10 @@ var app = new Vue({
       }
     },
     gameOver: function() {
+      this.status = "Game Over"
       if(this.playerType === 1){
         this.updateHumanScore();
+        this.$refs.humanboard.classList.add('invisible');
         if(this.correctCount > 2){
           this.question = "YOU WIN!!"
         } else {
@@ -268,13 +289,47 @@ var app = new Vue({
         }
       } else {
         this.updateBotScore();
+        this.$refs.botboard.classList.add('invisible');
         if(this.correctCount > 2) {
           this.question = "YOU LOSE!"
         } else {
           this.question = "YOU WIN!"
         }
       }
+      this.$refs.gameover.classList.remove('invisible');
+      this.canReady = 0
+      this.ready = 0
+      this.otherReady = 0
+      this.readyDisplay = "want to Rematch?"
+      this.otherReadyDisplay = "Waiting for other player..."
     },
+    rematch: function () {
+      if(!this.playerQuit){
+        this.status = "Awaiting Other Player Choice"
+        this.readyDisplay = "Not Ready"
+        this.round = 0
+        this.score = 0
+        this.isTurn = 0
+        this.question = 'Awaiting first question'
+        this.questionResults = ["Pending","Pending","Pending","Pending","Pending"]
+        this.botresponse = 'dummy bot response'
+        this.playerresponse = 'dummy player response'
+        this.option1 = 'Awaiting Bot Response'
+        this.option2 = 'Awaiting Bot Response'
+        this.correctCount = 0
+        this.timePassed = 0
+        this.timeLeft = 30
+        this.canReady = 1
+      } else {
+        this.readyDisplay = "Cannot Ready"
+        this.otherReadyDisplay = "Player has left the lobby"
+      }
+    },
+    quitgame: function () {
+      this.otherPlayerChannel.trigger('client-iquit', {id:1})
+      window.location.replace(`/`);
+    },
+
     startTimer() {
       this.timerInterval = setInterval(() => {
         this.timePassed += 1;
