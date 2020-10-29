@@ -32,12 +32,11 @@ def add_match(human_username, bot_username, match_type):
         mycursor.execute(query, values)
         mydb.commit()
 
-        mycursor.execute("SELECT MAX(SessionID) As Max FROM Score;")
-        res = mycursor.fetchall()
+        #mycursor.execute("SELECT MAX(SessionID) As Max FROM Score;")
+        #res = mycursor.fetchall()
+        res = 20
         __close_connection()
-        for i in res:
-            maximum = int(i[0])
-        return maximum
+        return res
     except mysql.connector.Error:
         return __fail
 
