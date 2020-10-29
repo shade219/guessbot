@@ -26,8 +26,8 @@
     <hr>
     <table cellpadding="5", border="1 px solid black">
       <tr>
-        <th>High Scores (random matches)</th>
-        <th>High Scores (friend matches)</th>
+        <th>High Scores (human scores)</th>
+        <th>High Scores (fake bot scores)</th>
       </tr>
       <tr>
         <td>
@@ -37,16 +37,16 @@
               <th>Score</th>
             </tr>
             <tr>
-              <td>Imsogood</td>
-              <td>3000</td>
+              <td id="top human"></td>
+              <td id="top human score"></td>
             </tr>
             <tr>
-              <td>AlmostNumbaOne</td>
-              <td>2999</td>
+              <td id="second human"></td>
+              <td id="second human score"></td>
             </tr>
             <tr>
-              <td>2020SoWeird</td>
-              <td>2020</td>
+              <td id="third human"></td>
+              <td id="third human score"></td>
             </tr>
           </table>
         </td>
@@ -57,29 +57,78 @@
               <th>Score</th>
             </tr>
             <tr>
-              <td>FriendlyGal</td>
-              <td>3600</td>
+              <td id="top bot"></td>
+              <td id="top bot score"></td>
             </tr>
             <tr>
-              <td>FriendlyGuy</td>
-              <td>2500</td>
+              <td id="second bot"></td>
+              <td id="second bot score"></td>
             </tr>
             <tr>
-              <td>FriendzPlz</td>
-              <td>1999</td>
+              <td id="third bot"></td>
+              <td id="third bot score"></td>
             </tr>
           </table>
         </td>
       </tr>
     </table>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
     var app = new Vue({
       el: "#app",
+      mounted: function(){
+        this.load()
+      },
       methods: {
         login: function() {
           let username = this.$refs.username.value
           window.location.replace(`/game?username=${username}`);
+        },
+        // Add function to send request to delete old messages and fetch the top highschores for bot and human
+        load: async function(){
+          await axios.post("http://3.19.145.43/database", {
+            request_type : "delete old scores"
+          }).then(
+            res => console.log(res),
+            error => console.log(error)
+          );
+          await axios.post("http://3.19.145.43/database", {
+            request_type: "get top user scores"
+          }).then(
+            res => {
+              var temp
+              var i = 0
+              var list = ["top human", "second human", "third human"]
+              while(i < 3){
+                temp = res['data'][i.toString()]['0']
+                document.getElementById(list[i]).innerHTML = temp
+
+                temp = res['data'][i.toString()]['2']
+                document.getElementById(list[i] + " score").innerHTML = temp
+                i++
+              }
+            },
+            error => console.log(error)
+          );
+          await axios.post("http://3.19.145.43/database", {
+            request_type : "get top bot scores"
+          }).then(
+            res => {
+              var temp
+              var i = 0
+              var list = ["top bot", "second bot", "third bot"]
+              while(i < 3){
+                temp = res['data'][i.toString()]['1']
+                document.getElementById(list[i]).innerHTML = temp
+
+                temp = res['data'][i.toString()]['3']
+                document.getElementById(list[i] + " score").innerHTML = temp
+                i++
+              }
+            },
+            error => console.log(error)
+          );
         }
       }
     })

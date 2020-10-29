@@ -35,7 +35,8 @@ var app = new Vue({
     timerInterval: null,
     timePassed: 0,
     timeLimit: 30,
-    timeLeft: 30
+    timeLeft: 30,
+    SessionID: 0
   },
   created () {
     let url = new URL(window.location.href);
@@ -125,6 +126,7 @@ var app = new Vue({
       this.$refs.scoreboard.classList.remove('invisible');
       if(this.playerType === 1){
         this.$refs.humanboard.classList.remove('invisible');
+        this.addMatch();
       } else {
         this.$refs.botboard.classList.remove('invisible');
         this.isTurn = 1;
@@ -258,12 +260,14 @@ var app = new Vue({
     },
     gameOver: function() {
       if(this.playerType === 1){
+        this.updateHumanScore();
         if(this.correctCount > 2){
           this.question = "YOU WIN!!"
         } else {
           this.question = "YOU LOSE!"
         }
       } else {
+        this.updateBotScore();
         if(this.correctCount > 2) {
           this.question = "YOU LOSE!"
         } else {
@@ -294,6 +298,40 @@ var app = new Vue({
     stopTimerHumanTimeout: function() {
       this.stopTimer()
       this.humanSubmitDefault()
+    },
+
+    addMatch: async function(){
+        await axios.post("http://3.19.145.43/database", {
+            request_type: "add match",
+            HumanUsername: this.username,
+            BotUsername: this.otherPlayerName,
+            MatchType: "random"
+        }).then(
+            res => this.SessionID = res['data'],
+            error => console.log(error)
+        );
+    },
+
+    updateHumanScore: async function(){
+        await axios.post("http://3.19.145.43/database", {
+            request_type: "update human score",
+            HumanScore: this.score,
+            "SessionID": this.SessionID
+        }).then(
+            res => console.log(res),
+            error => console.log(error)
+        );
+    },
+
+    updateBotScore: async function(){
+        await axios.post("http://3.19.145.43/database", {
+            request_type: "update bot score",
+            BotScore: this.score,
+            "SessionID": this.SessionID
+        }).then(
+            res => console.log(res),
+            error => console.log(error)
+        );
     }
   }
 })
