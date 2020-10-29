@@ -307,7 +307,7 @@ var app = new Vue({
             BotUsername: this.otherPlayerName,
             MatchType: "random"
         }).then(
-            res => this.SessionID = res['data'],
+            res => this.SessionID = res,
             error => console.log(error)
         );
     },
