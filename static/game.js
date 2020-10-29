@@ -40,24 +40,22 @@ var app = new Vue({
     timeLeft: 30,
     SessionID: 0,
     playerQuit: false,
-    searching: true
+    searching: false,
+    otherSearchStatus: false
   },
   created () {
     let url = new URL(window.location.href);
     let name = url.searchParams.get("username");
     this.username = name;
-    this.createChannel();
+    this.subscribe();
     this.listeners();
   },
   methods: {
-    //Creates client private websocket channel to receive game data
-    createChannel: function () {
-      this.myChannel = this.pusher.subscribe('private-' + this.username);
-    },
     //connects player to matchmaking lobby. Receives update triggers to add or
     //remove players who join or leave lobby
     subscribe: function () {
       let channel = this.pusher.subscribe('presence-guessbot');
+      this.myChannel = this.pusher.subscribe('private-' + this.username);
       channel.bind('pusher:subscription_succeeded', (player) => {
         this.players = player.count -1
         player.each((player) => {
@@ -68,10 +66,6 @@ var app = new Vue({
       channel.bind('pusher:member_added', (player) => {
         this.players++;
         this.connectedPlayers.push(player.id)
-        if(this.searching){
-          this.searching = false
-          this.choosePlayer()
-        }
 
       });
       channel.bind('pusher:member_removed', (player) => {
@@ -88,7 +82,6 @@ var app = new Vue({
     listeners: function () {
       this.pusher.bind('client-' + this.username, (message) => {
         this.otherPlayerName = message
-        this.searching = false;
         this.Status = "Connecting to other player..."
         this.playerType = this.getRndInteger(1,3)
         this.otherPlayerType = this.playerType === 1 ? 2 : 1
@@ -96,6 +89,14 @@ var app = new Vue({
         this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
           this.otherPlayerChannel.trigger('client-game-started', {name:this.username, ptype:this.otherPlayerType, otype:this.playerType})
         })
+        this.canReady = 1
+        this.status = "Waiting for players to ready"
+      })
+      this.myChannel.bind('client-initialize', (message) => {
+        this.Status = "Connecting to other player..."
+        this.playerType = this.getRndInteger(1,3)
+        this.otherPlayerType = this.playerType === 1 ? 2 : 1
+        this.otherPlayerChannel.trigger('client-game-started', {name:this.username, ptype:this.otherPlayerType, otype:this.playerType})
         this.canReady = 1
         this.status = "Waiting for players to ready"
       })
@@ -128,6 +129,37 @@ var app = new Vue({
         this.playerQuit = true
         this.status = "Other Player Quit"
       })
+      this.myChannel.bind('client-lfm', (message) => {
+        this.otherPlayerName = message
+        this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
+        this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
+          this.otherPlayerChannel.trigger('client-search-status', {search:this.searching})
+          if(!this.searching){
+            this.pusher.unsubscribe('private-' + this.otherPlayerName)
+          }
+        })
+      })
+      this.myChannel.bind('client-search-status', (searchStatus) => {
+        this.otherSearchStatus = searchStatus.search
+        if(!this.otherSearchStatus){
+          this.pusher.unsubscribe('private-' + this.otherPlayerName)
+          this.searching = true
+        } else {
+          this.otherPlayerChannel.trigger('client-initialize', this.username)
+        }
+      })
+    },
+    findPlayer: function() {
+      if(this.connectedPlayers.length>0){
+        var temp = this.getRndInteger(0,this.connectedPlayers.length)
+        this.otherPlayerName = this.connectedPlayers[temp]
+        this.otherPlayerChannel = this.pusher.subscribe('private-' + this.otherPlayerName)
+        this.otherPlayerChannel.bind('pusher:subscription_succeeded', () => {
+          this.otherPlayerChannel.trigger('client-lfm', this.username)
+        });
+      } else {
+        this.searching = true
+      }
     },
     //called if player joins matchmaking lobby with other waiting players
     //selects a random player and begins the game initialization

@@ -87,7 +87,7 @@ def database_calls():
             logf = open("appErrors.log", "a")
             logf.write(err)
             logf.close()
-            return 0 
+            return 0
     elif req_type == "update human score":
         return database.update_human_score(request.json["HumanScore"], request.json["SessionID"])
     elif req_type == "update bot score":
