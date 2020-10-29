@@ -35,7 +35,7 @@ def add_match(human_username, bot_username, match_type):
         mycursor.execute("SELECT MAX(SessionID) FROM Score;")
         res = mycursor.fetchone()
         __close_connection()
-        return string"res[0]"
+        return str(res[0])
     except mysql.connector.Error as err:
         logf = open("sqlerrors.log", "a")
         logf.write("Failed connection: {}".format(err))
