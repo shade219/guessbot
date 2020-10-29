@@ -1,4 +1,6 @@
 
+//game.js core game logic for Who's The Bot
+//Last Update 10/29/2020
 var app = new Vue({
   el: '#app',
   data: {
@@ -48,9 +50,12 @@ var app = new Vue({
     this.listeners();
   },
   methods: {
+    //Creates client private websocket channel to receive game data
     createChannel: function () {
       this.myChannel = this.pusher.subscribe('private-' + this.username);
     },
+    //connects player to matchmaking lobby. Receives update triggers to add or
+    //remove players who join or leave lobby
     subscribe: function () {
       let channel = this.pusher.subscribe('presence-guessbot');
       channel.bind('pusher:subscription_succeeded', (player) => {
@@ -77,6 +82,9 @@ var app = new Vue({
         }
       });
     },
+    //creates all listener bindings to receive websocket triggers
+    //Human Player Type == 1
+    //Bot Player Type == 2
     listeners: function () {
       this.pusher.bind('client-' + this.username, (message) => {
         this.otherPlayerName = message
@@ -121,6 +129,8 @@ var app = new Vue({
         this.status = "Other Player Quit"
       })
     },
+    //called if player joins matchmaking lobby with other waiting players
+    //selects a random player and begins the game initialization
     choosePlayer: function() {
       var matchFound = false
       while(!matchFound){
@@ -136,6 +146,9 @@ var app = new Vue({
         }
       }
     },
+    //loads game screen based on payer type
+    //triggers database insert of game session data
+    //starts timer for bot player first turn
     startGame: function() {
       this.status = "Game started with " + this.otherPlayerName
       this.$refs.matchmakingScreen.classList.add('invisible');
@@ -155,6 +168,7 @@ var app = new Vue({
     gameDeclined: function() {
       this.status = "Game declined"
     },
+    //called when player sets ready status. Triggers startGame if both players ready
     setReady: function() {
       if(this.canReady === 1){
         this.ready = 1
@@ -167,9 +181,11 @@ var app = new Vue({
         }
       }
     },
+    //returns a random integer between min (inclusive) and max (exclusive)
     getRndInteger: function(min, max) {
       return Math.floor(Math.random() * (max - min)) + min;
     },
+    //starts bot turn with data from humansubmit
     botTurn: function(message) {
       this.timeLeft = 30
       this.timePassed = 0
@@ -189,6 +205,7 @@ var app = new Vue({
         this.startTimer()
       }
     },
+    //starts human turn with data from botsubmit
     humanTurn: function(message) {
       this.timeLeft = 30
       this.timePassed = 0
@@ -206,6 +223,7 @@ var app = new Vue({
       }
       this.startTimer()
     },
+    //submits data from bot player turn
     botSubmit: function() {
       if(this.isTurn === 1){
         this.stopTimer()
@@ -214,6 +232,7 @@ var app = new Vue({
         this.isTurn = 0
       }
     },
+    //submits default data if turn is exceeded
     botSubmitDefault: function() {
       if(this.isTurn === 1){
         this.playerresponse = 'Player took too long to respond!'
@@ -221,6 +240,7 @@ var app = new Vue({
         this.isTurn = 0
       }
     },
+    //submits data from human player turn if left option is chosen
     humanSubmit1: function() {
       this.stopTimer()
       if(this.isTurn === 1){
@@ -244,6 +264,7 @@ var app = new Vue({
         }
       }
     },
+    //submits data from human player turn if right option is chosen
     humanSubmit2: function() {
       this.stopTimer()
       if(this.isTurn === 1){
@@ -267,6 +288,7 @@ var app = new Vue({
         }
       }
     },
+    //submits default data if time limit is exceeded
     humanSubmitDefault: function() {
       this.questionResults[this.round-1] = "Incorrect!"
       this.question = "Awaiting Next Question"
@@ -277,6 +299,8 @@ var app = new Vue({
         this.gameOver()
       }
     },
+    //sets game over status details after final game round
+    //sends score updates to database
     gameOver: function() {
       this.status = "Game Over"
       if(this.playerType === 1){
@@ -303,6 +327,7 @@ var app = new Vue({
       this.readyDisplay = "want to Rematch?"
       this.otherReadyDisplay = "Waiting for other player..."
     },
+    //resets values and triggers ready status for rematch
     rematch: function () {
       if(!this.playerQuit){
         this.status = "Awaiting Other Player Choice"
@@ -325,11 +350,12 @@ var app = new Vue({
         this.otherReadyDisplay = "Player has left the lobby"
       }
     },
+    //returns player to main menu if Main Menu is chosen at game over
     quitgame: function () {
       this.otherPlayerChannel.trigger('client-iquit', {id:1})
       window.location.replace(`/`);
     },
-
+    //starts turn timer
     startTimer() {
       this.timerInterval = setInterval(() => {
         this.timePassed += 1;
@@ -343,18 +369,21 @@ var app = new Vue({
         }
       },1000)
     },
+    //stops turn timer
     stopTimer() {
       clearInterval(this.timerInterval)
     },
+    //triggers default submit for bot turn if time limit is reached
     stopTimerBotTimeout: function() {
       this.stopTimer()
       this.botSubmitDefault()
     },
+    //truggers default submit for human turn if time limit is reached
     stopTimerHumanTimeout: function() {
       this.stopTimer()
       this.humanSubmitDefault()
     },
-
+    //inserts player details into database when match starts
     addMatch: async function(){
         await axios.post("http://3.19.145.43/database", {
             request_type: "add match",
@@ -366,7 +395,7 @@ var app = new Vue({
             error => console.log(error)
         );
     },
-
+    //updates human player score in database after game ends
     updateHumanScore: async function(){
         await axios.post("http://3.19.145.43/database", {
             request_type: "update human score",
@@ -377,7 +406,7 @@ var app = new Vue({
             error => console.log(error)
         );
     },
-
+    //updates bot score in database after game ends
     updateBotScore: async function(){
         await axios.post("http://3.19.145.43/database", {
             request_type: "update bot score",
