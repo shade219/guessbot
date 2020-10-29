@@ -267,7 +267,7 @@ var app = new Vue({
           this.question = "YOU LOSE!"
         }
       } else {
-        this.addBotScore();
+        this.updateBotScore();
         if(this.correctCount > 2) {
           this.question = "YOU LOSE!"
         } else {
