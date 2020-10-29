@@ -25,6 +25,7 @@ def __close_connection():
 
 # Creates match in database and returns the match id
 def add_match(human_username, bot_username, match_type):
+    logf = open("querytest.log", "w")
     try:
         __open_connection()
         query = ("INSERT INTO `Score` (`HumanUsername`, `BotUsername`, `HumanScore`, `BotScore`, `SessionID`, `MatchType`) VALUES (%s, %s, %s, %s, %s, %s)")
@@ -37,7 +38,8 @@ def add_match(human_username, bot_username, match_type):
         res = 20
         __close_connection()
         return res
-    except mysql.connector.Error:
+    except mysql.connector.Error as err:
+        logf.write(err)
         return __fail
 
 
