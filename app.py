@@ -81,7 +81,12 @@ def database_calls():
     elif req_type == "get top bot scores":
         return database.get_top_bot_scores()
     elif req_type == "add match":
-        return database.add_match(request.json['HumanUsername'], request.json['BotUsername'], request.json['MatchType'])
+        try:
+            return database.add_match(request.json['HumanUsername'], request.json['BotUsername'], request.json['MatchType'])
+        except Exception as e:
+            logf = open("appErrors.log", "a")
+            logf.write(err)
+            logf.close() 
     elif req_type == "update human score":
         return database.update_human_score(request.json["HumanScore"], request.json["SessionID"])
     elif req_type == "update bot score":
