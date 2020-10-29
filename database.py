@@ -36,7 +36,10 @@ def add_match(human_username, bot_username, match_type):
         res = mycursor.fetchone()
         __close_connection()
         return res[0]
-    except mysql.connector.Error:
+    except mysql.connector.Error as err:
+        logf = open("sqlerrors.log", "a")
+        logf.write("Failed connection: {}".format(err))
+        logf.close()
         return __fail
 
 
