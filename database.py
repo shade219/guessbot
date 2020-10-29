@@ -33,10 +33,10 @@ def add_match(human_username, bot_username, match_type):
         mydb.commit()
 
         mycursor.execute("SELECT MAX(SessionID) As Max FROM Score;")
-        res = mycursor.fetchall()
+        res = mycursor.fetchone()
         __close_connection()
-        return res
-    except mysql.connector.Error as err:
+        return res[0]
+    except mysql.connector.Error:
         return __fail
 
 
