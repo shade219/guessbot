@@ -34,7 +34,7 @@ def add_match(human_username, bot_username, match_type):
         mycursor.execute(query, values)
         mydb.commit()
 
-        mycursor.execute("SELECT `SessionID` FROM `Score` WHERE your_table_primary_key = LAST_INSERT_ID();")
+        mycursor.execute("SELECT MAX(`SessionID`) FROM `Score`;")
         res = mycursor.fetchone()
         __close_connection()
         return res
