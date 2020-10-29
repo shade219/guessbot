@@ -29,7 +29,7 @@ def add_match(human_username, bot_username, match_type):
     try:
         __open_connection()
         query = ("INSERT INTO `Score` (`HumanUsername`, `BotUsername`, `HumanScore`, `BotScore`, `SessionID`, `MatchType`) VALUES (%s, %s, %s, %s, %s, %s)")
-        values = (human_username, bot_username, 0, 0, None, match_type)
+        values = (human_username, bot_username, '0', '0', 'NULL', match_type)
         mycursor.execute(query, values)
         mydb.commit()
 
@@ -40,6 +40,7 @@ def add_match(human_username, bot_username, match_type):
         return res
     except mysql.connector.Error as err:
         logf.write(err)
+        logf.close()
         return __fail
 
 
