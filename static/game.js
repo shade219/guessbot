@@ -26,6 +26,7 @@ var app = new Vue({
     round: 0,
     score: 0,
     isTurn: 0,
+    turnDisplay: "Waiting for Turn",
     question: 'Awaiting first question',
     questionResults: ["Pending","Pending","Pending","Pending","Pending"],
     botresponse: 'dummy bot response',
@@ -149,7 +150,10 @@ var app = new Vue({
         }
       })
     },
+    //checks random other player in lobby for match
+    //if other player not looking for match enter searching mode
     findPlayer: function() {
+      this.status = "Searching for game..."
       if(this.connectedPlayers.length>0){
         var temp = this.getRndInteger(0,this.connectedPlayers.length)
         this.otherPlayerName = this.connectedPlayers[temp]
@@ -161,8 +165,7 @@ var app = new Vue({
         this.searching = true
       }
     },
-    //called if player joins matchmaking lobby with other waiting players
-    //selects a random player and begins the game initialization
+    //OLD matchmaking function
     choosePlayer: function() {
       var matchFound = false
       while(!matchFound){
@@ -194,6 +197,7 @@ var app = new Vue({
       } else {
         this.$refs.botboard.classList.remove('invisible');
         this.isTurn = 1;
+        this.turnDisplay = "It's your turn!"
         this.startTimer()
       }
     },
@@ -233,6 +237,7 @@ var app = new Vue({
       } else {
         this.round += 1
         this.isTurn = 1
+        this.turnDisplay = "It's your turn!"
         this.question = "new question: " + this.round
         this.startTimer()
       }
@@ -245,6 +250,7 @@ var app = new Vue({
       this.playerresponse = message.pmessage
       this.botresponse = message.bmessage
       this.isTurn = 1
+      this.turnDisplay = "It's your turn!"
       this.randomPlacement = this.getRndInteger(1,3)
       if(this.randomPlacement === 1){
         this.option1 = this.playerresponse
@@ -262,6 +268,7 @@ var app = new Vue({
         this.playerresponse = this.$refs.botsubmit.value
         this.otherPlayerChannel.trigger('client-human-turn', {question:this.question, pmessage:this.playerresponse, bmessage:this.botresponse})
         this.isTurn = 0
+        this.turnDisplay = "Waiting for other player"
       }
     },
     //submits default data if turn is exceeded
@@ -270,6 +277,7 @@ var app = new Vue({
         this.playerresponse = 'Player took too long to respond!'
         this.otherPlayerChannel.trigger('client-human-turn', {question:this.question, pmessage:this.playerresponse, bmessage:this.botresponse})
         this.isTurn = 0
+        this.turnDisplay = "Waiting for other player"
       }
     },
     //submits data from human player turn if left option is chosen
@@ -283,12 +291,14 @@ var app = new Vue({
           this.question = "Awaiting Next Question"
           this.round += 1
           this.isTurn = 0
+          this.turnDisplay = "Waiting for other player"
           this.otherPlayerChannel.trigger('client-bot-turn', {answer:1})
         } else {
           this.questionResults[this.round-1] = "Incorrect!"
           this.question = "Awaiting Next Question"
           this.round += 1
           this.isTurn = 0
+          this.turnDisplay = "Waiting for other player"
           this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
         }
         if(this.round > 5){
@@ -307,12 +317,14 @@ var app = new Vue({
           this.question = "Awaiting Next Question"
           this.round += 1
           this.isTurn = 0
+          this.turnDisplay = "Waiting for other player"
           this.otherPlayerChannel.trigger('client-bot-turn', {answer:1})
         } else {
           this.questionResults[this.round-1] = "Incorrect!"
           this.question = "Awaiting Next Question"
           this.round += 1
           this.isTurn = 0
+          this.turnDisplay = "Waiting for other player"
           this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
         }
         if(this.round > 5){
@@ -326,6 +338,7 @@ var app = new Vue({
       this.question = "Awaiting Next Question"
       this.round += 1
       this.isTurn = 0
+      this.turnDisplay = "Waiting for other player"
       this.otherPlayerChannel.trigger('client-bot-turn', {answer:0})
       if(this.round > 5){
         this.gameOver()
@@ -367,6 +380,7 @@ var app = new Vue({
         this.round = 0
         this.score = 0
         this.isTurn = 0
+        this.turnDisplay = "Waiting for other player"
         this.question = 'Awaiting first question'
         this.questionResults = ["Pending","Pending","Pending","Pending","Pending"]
         this.botresponse = 'dummy bot response'
