@@ -168,23 +168,38 @@
               </tr>
               <tr>
                 <td>Question 1:</td>
-                <td>{% raw %} {{ questionResults[0] }} {% endraw %}</td>
+                <!--<td>{% raw %} {{ questionResults[0] }} {% endraw %}</td>-->
+                <td v-if="this.questionResults[0] === 'Correct!'"><img src="{{ url_for('static', filename='checkmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Correct"></td>
+                <td v-else-if="this.questionResults[0] === 'Incorrect!'"><img src="{{ url_for('static', filename='redx.png')}}" class="img-thumbnail" width="25" height="25" alt="Incorrect"></td>
+                <td v-else="this.questionResults[0] === 'Pending'"><img src="{{ url_for('static', filename='questionmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Pending"></td>
               </tr>
               <tr>
                 <td>Question 2:</td>
-                <td>{% raw %} {{ questionResults[1] }} {% endraw %}</td>
+                <!--<td>{% raw %} {{ questionResults[1] }} {% endraw %}</td>-->
+                <td v-if="this.questionResults[1] === 'Correct!'"><img src="{{ url_for('static', filename='checkmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Correct"></td>
+                <td v-else-if="this.questionResults[1] === 'Incorrect!'"><img src="{{ url_for('static', filename='redx.png')}}" class="img-thumbnail" width="25" height="25" alt="Incorrect"></td>
+                <td v-else="this.questionResults[1] === 'Pending'"><img src="{{ url_for('static', filename='questionmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Pending"></td>
               </tr>
               <tr>
                 <td>Question 3:</td>
-                <td>{% raw %} {{ questionResults[2] }} {% endraw %}</td>
+                <!--<td>{% raw %} {{ questionResults[2] }} {% endraw %}</td>-->
+                <td v-if="this.questionResults[2] === 'Correct!'"><img src="{{ url_for('static', filename='checkmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Correct"></td>
+                <td v-else-if="this.questionResults[2] === 'Incorrect!'"><img src="{{ url_for('static', filename='redx.png')}}" class="img-thumbnail" width="25" height="25" alt="Incorrect"></td>
+                <td v-else="this.questionResults[2] === 'Pending'"><img src="{{ url_for('static', filename='questionmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Pending"></td>
               </tr>
               <tr>
                 <td>Question 4:</td>
-                <td>{% raw %} {{ questionResults[3] }} {% endraw %}</td>
+                <!--<td>{% raw %} {{ questionResults[3] }} {% endraw %}</td>-->
+                <td v-if="this.questionResults[3] === 'Correct!'"><img src="{{ url_for('static', filename='checkmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Correct"></td>
+                <td v-else-if="this.questionResults[3] === 'Incorrect!'"><img src="{{ url_for('static', filename='redx.png')}}" class="img-thumbnail" width="25" height="25" alt="Incorrect"></td>
+                <td v-else="this.questionResults[3] === 'Pending'"><img src="{{ url_for('static', filename='questionmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Pending"></td>
               </tr>
               <tr>
                 <td>Question 5:</td>
-                <td>{% raw %} {{ questionResults[4] }} {% endraw %}</td>
+                <!--<td>{% raw %} {{ questionResults[4] }} {% endraw %}</td>-->
+                <td v-if="this.questionResults[4] === 'Correct!'"><img src="{{ url_for('static', filename='checkmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Correct"></td>
+                <td v-else-if="this.questionResults[4] === 'Incorrect!'"><img src="{{ url_for('static', filename='redx.png')}}" class="img-thumbnail" width="25" height="25" alt="Incorrect"></td>
+                <td v-else="this.questionResults[4] === 'Pending'"><img src="{{ url_for('static', filename='questionmark.png')}}" class="img-thumbnail" width="25" height="25" alt="Pending"></td>
               </tr>
             </table>
           </td>
