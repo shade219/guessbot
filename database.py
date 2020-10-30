@@ -110,3 +110,43 @@ def delete_old_scores():
         return "Success"
     except mysql.connector.Error:
         return __fail
+
+    
+# Fetches a random question from the chatterbot database.
+def fetch_random_question():
+    try:
+        # temporary switch DB in the config -- Might be better to pass as parameter
+        config['database'] = "chatterbot";
+        __open_connection()
+        config['database'] = "mysql";
+
+        # Using Rand() limit 1 to retrieve a random response
+        mycursor.execute("select in_response_to from( SELECT in_response_to FROM statement where in_response_to is not null)z order by RAND() limit 1 ")
+        result = mycursor.fetchone()
+        __close_connection()
+
+        # returns a 1D tuple
+        return result
+    except mysql.connector.Error:
+        return __fail
+
+# Fetches a random answer from the chatterbot database.
+# Best to pass a string - example for direct question/answer: fetch_random_answer(str(fetch_random_question()[0]));
+def fetch_random_answer(question):
+    try:
+        # temporary switch DB in the config -- Might be better to pass as parameter
+        config['database'] = "chatterbot";
+        __open_connection()
+        config['database'] = "mysql";
+
+        # Using Rand() limit 1 to retrieve a random response
+        query = ("select text FROM statement WHERE in_response_to = '"+ question + "' and in_response_to is not null order by rand() limit 1")
+        mycursor.execute(query)
+        result = mycursor.fetchone()
+        __close_connection()
+        
+        # returns a 1D tuple
+        return result
+
+    except mysql.connector.Error:
+        return __fail
