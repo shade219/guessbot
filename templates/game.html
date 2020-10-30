@@ -3,28 +3,136 @@
 <head>
   <meta charset="utf-8">
   <title>Who's The Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
   <style>
     .invisible {display: none;}
   </style>
 </head>
 <body>
+  <table class="table" cellpadding="5">
+    <tr>
+      <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#aboutModal">About</button></td>
+      <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#rulesModal">Rules</button></td>
+    </tr>
+  </table>
+  <hr>
+  <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="aboutModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="aboutModalLabel">ABOUT</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Who's The Bot</strong> is a two player game that simulates the setup of a turing test.
+          Two players and a chatbot are linked together and exchange a series of messages. One player, the "bot player",
+          attempts to write a short message respose to a prompt that sounds as close to a chatbot response as they can.
+          The other player, the "human player" receives two responses. One from the bot player and one from an actual
+          chatbot. The human player must determine which response was written by the chatbot. Successful guesses by
+          the human player and successful dupes by the bot player are recorded as a score. At the end of five rounds a
+          winner is determined.</p>
+
+        <p> This game was written as a senior capstone project by the <strong>Purple Sloths</strong> team at DePaul
+          University.</p>
+
+        <h2>Meet the Team</h2>
+        <table cellpadding="15">
+          <tr>
+            <th>Team Members</th>
+            <th>Team Roles</th>
+          </tr>
+          <tr>
+            <td>Ananya Sharma</td>
+            <td>Video/Presentation Manager</td>
+          </tr>
+          <tr>
+            <td>Chris Lubera</td>
+            <td>Collaboration Manager</td>
+          </tr>
+          <tr>
+            <td>Farhan Sheikh</td>
+            <td>Requirements Manager</td>
+          </tr>
+          <tr>
+            <td>Mathew Parrinello</td>
+            <td>Design Manager</td>
+          </tr>
+          <tr>
+            <td>Merga Tafa</td>
+            <td>Useablity Manager</td>
+          </tr>
+          <tr>
+            <td>Ryan Wright</td>
+            <td>Planning Manager</td>
+          </tr>
+          <tr>
+            <td>Sameer Samani</td>
+            <td>Documentation Manager</td>
+          </tr>
+          <tr>
+            <td>Samuel Stahl</td>
+            <td>Implementation/Project Manager</td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="modal fade" id="rulesModal" tabindex="-1" role="dialog" aria-labelledby="rulesModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rulesModalLabel">RULES</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p> <strong>Setup:</strong> At the start of the game each player will be randomly assigned the role of human player or bot player.
+          The game consists of five rounds. During each round the player will complete an objective based on their role.
+          At the end of each round the score is updated. At the end of five rounds a winner is declared and the game ends.</p>
+
+        <p><strong>Human Player Objective:</strong> Within the time limit, guess which message was written by the chatbot</p>
+
+        <p><strong>Bot Player Objective:</strong> Within the time limit, write a short response to the prompt in the manner of a chatbot</p>
+
+        <p><strong>Scoring:</strong> The human player receives points for each message they guess correctly. The bot player receives points
+        for each message that the human player guesses incorrectly.</p>
+
+        <p><strong>Winning:</strong> At the end of the fifth round, the player with the most points wins!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+  </div>
   <div id="app">
     <div ref="matchmakingScreen">
       <table>
         <tr>
-          <td><button v-on:click="findPlayer" type="button" name="matchmakingbtn" ref="matchmakingbtn">Join Random Match</button></td>
+          <td><button v-on:click="findPlayer" type="button" class="btn btn-outline-secondary" name="matchmakingbtn" ref="matchmakingbtn">Join Random Match</button></td>
         </tr>
         <tr>
           <td>{% raw %}{{ status }}{% endraw %}</td>
         </tr>
         <tr>
-          <td><button v-on:click="setReady" type="button" name="readybtn" ref="readybtn">I'm Ready!</button></td>
+          <td><button v-on:click="setReady" type="button" class="btn btn-outline-success btn-sm" name="readybtn" ref="readybtn">I'm Ready!</button></td>
           <td>Other Player:</td>
-          <td>Game will start when both players are ready</td>
+
         </tr>
         <tr>
           <td>{% raw %}{{ readyDisplay }}{% endraw %}</td>
           <td>{% raw %}{{ otherReadyDisplay }}{% endraw %}</td>
+        </tr>
+        <tr>
+          <td>Game will start when both players are ready</td>
         </tr>
       </table>
     </div>
@@ -87,8 +195,8 @@
           <td>{% raw %} {{ option2 }} {% endraw %}</td>
         </tr>
         <tr>
-          <td><button v-on:click="humanSubmit1" type="button" name="button1" ref="button1">This is a bot!</button></td>
-          <td><button v-on:click="humanSubmit2" type="button" name="button2" ref="button2">This is a bot!</button></td>
+          <td><button v-on:click="humanSubmit1" type="button" name="button1" class="btn btn-outline-info btn-sm" ref="button1">This is a bot!</button></td>
+          <td><button v-on:click="humanSubmit2" type="button" name="button2" class="btn btn-outline-info btn-sm" ref="button2">This is a bot!</button></td>
         </tr>
       </table>
     </div>
@@ -103,7 +211,7 @@
           <td>Waiting on bot response</td>
         </tr>
         <tr>
-          <td><button type="submit" @click.prevent="botSubmit">Submit</button></td>
+          <td><button type="submit" class="btn btn-outline-info btn-sm" @click.prevent="botSubmit">Submit</button></td>
           <td></td>
         </tr>
       </table>
@@ -111,11 +219,11 @@
     <div class ="invisible" ref="gameover">
       <table>
         <tr>
-          <td><button v-on:click="rematch" type="button" name="rematchbtn" ref="rematchbtn">I Want A Rematch!</button></td>
-          <td><button v-on:click="quitgame" type="button" name="quitbtn" ref="quitbtn">Main Menu</button></td>
+          <td><button v-on:click="rematch" type="button" class="btn btn-outline-success" name="rematchbtn" ref="rematchbtn">I Want A Rematch!</button></td>
+          <td><button v-on:click="quitgame" type="button" class="btn btn-outline-danger" name="quitbtn" ref="quitbtn">Main Menu</button></td>
         </tr>
         <tr>
-          <td><button v-on:click="setReady" type="button" name="readybtn" ref="readybtn">I'm Ready!</button></td>
+          <td><button v-on:click="setReady" type="button" name="readybtn" class="btn btn-outline-success btn-sm" ref="readybtn">I'm Ready!</button></td>
           <td>Other Player:</td>
           <td>{% raw  %}{{ status }}{% endraw %}</td>
         </tr>
@@ -129,6 +237,8 @@
   <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   <script>
     //For dev testing. Disable for production
     Pusher.logToConsole = true;
