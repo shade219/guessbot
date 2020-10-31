@@ -118,7 +118,7 @@ def get_bot_QA():
         mycursor.execute("SELECT * FROM `QA`;")
         res = mycursor.fetchmany(39)
         index = random.randrange(0,39,1)
-        result = []
+        result = {}
         result[0] = res[index][0]
         result[1] = res[index][1]
         result[2] = "2"
