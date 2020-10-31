@@ -95,11 +95,7 @@ def database_calls():
     elif req_type == "delete old scores":
         return database.delete_old_scores()
     elif req_type == "get QA":
-        #return database.get_bot_QA()
-        q = database.fetch_random_question()
-        a = database.fetch_random_answer(q)
-        result = {q,a}
-        return result
+        return database.get_bot_QA()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
