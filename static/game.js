@@ -198,6 +198,7 @@ var app = new Vue({
         this.$refs.botboard.classList.remove('invisible');
         this.isTurn = 1;
         this.turnDisplay = "It's your turn!"
+        this.getQA()
         this.startTimer()
       }
     },
@@ -238,7 +239,7 @@ var app = new Vue({
         this.round += 1
         this.isTurn = 1
         this.turnDisplay = "It's your turn!"
-        this.question = "new question: " + this.round
+        this.getQA()
         this.startTimer()
       }
     },
@@ -462,6 +463,18 @@ var app = new Vue({
             res => console.log(res),
             error => console.log(error)
         );
+    },
+    getQA: async function(){
+      await axios.post("http://3.19.145.43/database", {
+        request_type: "get QA"
+      }).then(
+        res => {
+          console.log(res)
+          this.question = res['data']['0']
+          this.botresponse = res['data']['1']
+        },
+        error => console.log(error)
+      );
     }
   }
 })

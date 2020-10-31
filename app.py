@@ -94,7 +94,8 @@ def database_calls():
         return database.update_bot_score(request.json["BotScore"], request.json["SessionID"])
     elif req_type == "delete old scores":
         return database.delete_old_scores()
-
+    elif req_type == "get QA":
+        return database.get_bot_QA()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

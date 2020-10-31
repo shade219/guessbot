@@ -1,4 +1,5 @@
 import mysql.connector
+import random
 
 config = {
     "host": "3.19.145.43",
@@ -111,7 +112,18 @@ def delete_old_scores():
     except mysql.connector.Error:
         return __fail
 
-    
+def get_bot_QA():
+    try:
+        __open_connection()
+        mycursor.execute("SELECT * FROM `QA`;")
+        res = mycursor.fetchmany(39)
+        index = random.crandrange(0,39,1)
+        QAs = res[index]
+        __close_connection()
+        return QAs
+    except mysql.connector.Error:
+        return __fail
+
 # Fetches a random question from the chatterbot database.
 def fetch_random_question():
     try:
@@ -144,7 +156,7 @@ def fetch_random_answer(question):
         mycursor.execute(query)
         result = mycursor.fetchone()
         __close_connection()
-        
+
         # returns a 1D tuple
         return result
 
