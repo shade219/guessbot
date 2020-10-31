@@ -470,8 +470,8 @@ var app = new Vue({
       }).then(
         res => {
           console.log(res)
-          this.question = res['data']['0']
-          this.botresponse = res['data']['1']
+          this.question = res['data']
+          this.botresponse = res['statusText']
         },
         error => console.log(error)
       );
