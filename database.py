@@ -119,8 +119,8 @@ def get_bot_QA():
         res = mycursor.fetchmany(39)
         index = random.randrange(0,39,1)
         result = []
-        result[0] = res[index]['0']
-        result[1] = res[index]['1']
+        result[0] = res[index][0]
+        result[1] = res[index][1]
         result[2] = "2"
         result[3] = "3"
         QAs = result
