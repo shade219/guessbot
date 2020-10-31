@@ -117,7 +117,7 @@ def get_bot_QA():
         __open_connection()
         mycursor.execute("SELECT * FROM `QA`;")
         res = mycursor.fetchmany(39)
-        index = random.crandrange(0,39,1)
+        index = random.randrange(0,39,1)
         QAs = res[index]
         __close_connection()
         return QAs
